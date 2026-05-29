@@ -1,9 +1,9 @@
+'use server';
+
 import { query } from '../graphql/client';
 import { GET_RANDOM_ARTWORK } from '../graphql/queries';
 
 export async function fetchArtworks() {
-  'use server';
-
   try {
     const { data, error } = await query({
       query: GET_RANDOM_ARTWORK,

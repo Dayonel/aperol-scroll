@@ -7,5 +7,5 @@ export default async function ArtworkGallery() {
 
   if (error) return <ArtworkError error={error} />;
 
-  return <ArtworkCarousel artworks={artworks}></ArtworkCarousel>;
+  return <ArtworkCarousel initialArtworks={artworks}></ArtworkCarousel>;
 }
