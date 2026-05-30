@@ -5,7 +5,7 @@ import InfiniteScroll from '../infinite-scroll';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { fetchArtworks } from '@/lib/actions/fetchArtworks';
 import ArtworkSection from './artwork-section';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useScrollTracker } from '@/hooks/use-scroll-tracker';
 
 interface ArtworkProps {
@@ -40,28 +40,51 @@ export default function ArtworkCarousel({ initialArtworks }: ArtworkProps) {
     return chunks;
   }, [artworks]);
 
-  const { sectionProgress, ref } = useScrollTracker(sections.length);
+  const { sectionProgress, ref, currIndex } = useScrollTracker(sections.length);
 
   return (
-    <div ref={ref} className="relative w-full md:pt-32">
-      <motion.div
-        style={{
-          scaleX: sectionProgress,
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 8,
-          originX: 0,
-          backgroundColor: 'var(--brand)',
-        }}
-      />
+    <div
+      ref={ref}
+      style={{ '--sections': sections.length } as React.CSSProperties}
+      className="relative w-full h-[calc(100svh*var(--sections))]"
+    >
+      <div className="fixed top-0 left-0 w-full h-screen overflow-hidden flex items-start md:items-center justify-center md:pt-32">
+        <motion.div
+          style={{
+            scaleX: sectionProgress,
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 8,
+            originX: 0,
+            backgroundColor: 'var(--brand)',
+            zIndex: 50,
+          }}
+        />
 
-      <InfiniteScroll loadMore={loadMore}>
-        {sections.map((chunk, index) => (
-          <ArtworkSection artworks={chunk} key={index}></ArtworkSection>
-        ))}
-      </InfiniteScroll>
+        <AnimatePresence>
+          {sections[currIndex] && (
+            <motion.div
+              key={currIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0 flex items-start md:items-center justify-center w-full h-full overflow-y-auto"
+            >
+              <ArtworkSection
+                artworks={sections[currIndex]}
+                sectionProgress={sectionProgress}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div className="absolute bottom-0 left-0 w-full h-[50vh] pointer-events-none">
+        <InfiniteScroll loadMore={loadMore} />
+      </div>
     </div>
   );
 }

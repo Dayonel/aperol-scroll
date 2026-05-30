@@ -1,9 +1,10 @@
-import { useMotionValue, useMotionValueEvent, useScroll } from 'motion/react';
-import { useRef } from 'react';
+import { useMotionValueEvent, useScroll } from 'motion/react';
+import { useRef, useState } from 'react';
 
 export const useScrollTracker = (sections: number) => {
   const ref = useRef(null);
-  const sectionProgress = useMotionValue(0);
+  const [sectionProgress, setSectionProgress] = useState(0);
+  const [currIndex, setCurrIndex] = useState(0);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -15,11 +16,13 @@ export const useScrollTracker = (sections: number) => {
     const index = Math.floor(global);
     const progress = global - index;
 
-    sectionProgress.set(progress);
+    setSectionProgress(progress);
+    setCurrIndex(index);
   });
 
   return {
     ref,
     sectionProgress,
+    currIndex,
   };
 };
