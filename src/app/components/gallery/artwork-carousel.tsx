@@ -1,10 +1,10 @@
 'use client';
 
 import { Artwork } from '@/app/types/artwork';
-import ArtworkPanel from './artwork-panel';
 import InfiniteScroll from '../infinite-scroll';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { fetchArtworks } from '@/lib/actions/fetchArtworks';
+import ArtworkSection from './artwork-section';
 
 interface ArtworkProps {
   initialArtworks: Artwork[];
@@ -29,11 +29,22 @@ export default function ArtworkCarousel({ initialArtworks }: ArtworkProps) {
     }
   }, []);
 
+  const artworkChunks = useMemo(() => {
+    const chunks: Artwork[][] = [];
+    for (let i = 0; i < artworks.length; i += 4) {
+      chunks.push(artworks.slice(i, i + 4));
+    }
+
+    return chunks;
+  }, [artworks]);
+
   return (
-    <InfiniteScroll loadMore={loadMore}>
-      {artworks.map((art, index) => (
-        <ArtworkPanel key={index} artwork={art} index={index}></ArtworkPanel>
-      ))}
-    </InfiniteScroll>
+    <div className="relative w-full md:pt-32">
+      <InfiniteScroll loadMore={loadMore}>
+        {artworkChunks.map((chunk, index) => (
+          <ArtworkSection artworks={chunk} key={index}></ArtworkSection>
+        ))}
+      </InfiniteScroll>
+    </div>
   );
 }

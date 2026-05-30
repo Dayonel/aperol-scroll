@@ -22,9 +22,9 @@ export default function InfiniteScroll({
   }, [isInView, loadMore]);
 
   return (
-    <div>
+    <>
       {children}
       <div ref={ref}></div>
-    </div>
+    </>
   );
 }
