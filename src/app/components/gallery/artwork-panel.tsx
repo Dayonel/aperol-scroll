@@ -13,7 +13,7 @@ const ArtworkPanel = ({ artwork, index }: ArtworkPanelProps) => {
         {artwork.title}
       </h2>
 
-      <span className="text-[20rem] md:text-[12rem] leading-none text-center text-red-600">
+      <span className="text-[20rem] md:text-[12rem] leading-none text-center text-brand">
         {index}
       </span>
     </div>
